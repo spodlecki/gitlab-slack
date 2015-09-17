@@ -522,7 +522,7 @@ function processMergeRequest(httpreq, req) {
 								),
 								title: object.title.replace('<', '&lt;').replace('>', '&gt;'), // Allow people use < & > in their titles.
 								title_link: object.url,
-								text: formatIssueDescription(object.description),
+								text: object.action == 'open' || object.action == 'reopen' ? formatIssueDescription(object.description) : null,
 								color: '#F28A2B',
 								mrkdwn_in: ['title', 'text']
 							}
