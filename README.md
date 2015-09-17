@@ -31,6 +31,8 @@ Additional keys can be added for documentation or other purposes, but they will 
    Copy the service script to the `/etc/init.d` directory.
 1. `chmod 755 /etc/init.d/gitlab-slack`    
    Allow the service script to run.
+1. `cp _config.json config.json`
+   Copy over the configuration for your slack
 1. `update-rc.d gitlab-slack start 70 2 3 4 5 . stop 40 0 1 6 .`    
    On Ubuntu, set the start and stop priorities for the service script.
 1. `service gitlab-slack start`
