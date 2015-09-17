@@ -461,15 +461,15 @@ function processMergeRequest(httpreq, req) {
 		logger.debug(httpreq, 'PROCESS: Merge Request');
 
 		// tags work like branches; before zero is add, after zero is delete
-		var object = req.object_attributes;
+		var object = req.object_attributes,
+				user = req.user;
 
 		return Promise.join(
 				gitlab.getProject(object.source_project_id),
 				gitlab.getUserById(object.author_id),
 				// Assignee can be null, so don't try to fetch details it if it is.
 				object.assignee_id ? gitlab.getUserById(object.assignee_id) : Promise.resolve(null),
-				object.updated_by_id ? gitlab.getUserById(object.updated_by_id) : Promise.resolve(null),
-				function(project, author, assignee, blame) {
+				function(project, author, assignee) {
 					var channel = config.project_channel_map[project.id.toString()],
 							verb;
 
@@ -503,8 +503,8 @@ function processMergeRequest(httpreq, req) {
 						project.path,
 						object.iid,
 						verb,
-						blame.username,
-						object.user.username,
+						user.username,
+						user.username,
 						assigneeName,
 						author.username,
 						author.username
