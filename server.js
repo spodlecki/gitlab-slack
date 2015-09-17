@@ -122,6 +122,9 @@ function parseNotification(httpreq, data) {
 			case 'tag_push':
 				processed = processTag(httpreq, data);
 				break;
+			case 'merge_request':
+				processed = processMergeRequest(httpreq, data);
+				break;
 		}
 	}
 
@@ -454,6 +457,87 @@ function processTag(httpreq, tagData) {
 	});
 }
 
+function processMergeRequest(httpreq, req) {
+		logger.debug(httpreq, 'PROCESS: Merge Request');
+
+		// tags work like branches; before zero is add, after zero is delete
+		var object = req.object_attributes;
+
+		return Promise.join(
+				gitlab.getProject(object.source_project_id),
+				gitlab.getUserById(object.author_id),
+				// Assignee can be null, so don't try to fetch details it if it is.
+				object.assignee_id ? gitlab.getUserById(object.assignee_id) : Promise.resolve(null),
+				object.updated_by_id ? gitlab.getUserById(object.updated_by_id) : Promise.resolve(null),
+				function(project, author, assignee, blame) {
+					var channel = config.project_channel_map[project.id.toString()],
+							verb;
+
+					switch (object.action) {
+						case 'open':
+							verb = 'created';
+							break;
+						case 'reopen':
+							verb = 're-opened';
+							break;
+						case 'update':
+							verb = 'modified';
+							break;
+						case 'close':
+							verb = 'closed';
+							break;
+						default:
+							verb = '(' + object.action + ')';
+							break;
+					}
+
+					var assigneeName = '_none_',
+							text;
+
+					if (assignee) {
+						assigneeName = util.format('<https://git.lab.teralogics.com/u/%s|%s>', assignee.username, assignee.username);
+					}
+
+					text = util.format(
+						'[%s] merge request #%s %s by <https://git.lab.teralogics.com/u/%s|%s> — *assignee:* %s — *creator:* <https://git.lab.teralogics.com/u/%s|%s>',
+						project.path,
+						object.iid,
+						verb,
+						blame.username,
+						object.user.username,
+						assigneeName,
+						author.username,
+						author.username
+					);
+
+					var response = {
+						text: text,
+						attachments: [
+							{
+								fallback: util.format(
+									'#%s %s\n%s',
+									object.iid,
+									object.title,
+									object.description
+								),
+								title: object.title.replace('<', '&lt;').replace('>', '&gt;'), // Allow people use < & > in their titles.
+								title_link: object.url,
+								text: formatIssueDescription(object.description),
+								color: '#F28A2B',
+								mrkdwn_in: ['title', 'text']
+							}
+						]
+					};
+
+					if (channel) {
+						response.channel = channel;
+					}
+
+					return response;
+				}
+			);
+
+	}
 /**
  * Processes an unrecognized message.
  * @param {Object} httpreq The HTTP request.
