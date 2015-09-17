@@ -495,11 +495,11 @@ function processMergeRequest(httpreq, req) {
 							text;
 
 					if (assignee) {
-						assigneeName = util.format('<https://git.lab.teralogics.com/u/%s|%s>', assignee.username, assignee.username);
+						assigneeName = util.format('<@%s|%s>', assignee.username, assignee.username);
 					}
 
 					text = util.format(
-						'[%s] merge request #%s %s by <https://git.lab.teralogics.com/u/%s|%s> — *assignee:* %s — *creator:* <https://git.lab.teralogics.com/u/%s|%s>',
+						'[%s] merge request #%s %s by <@%s|%s> — *assignee:* %s — *creator:* <@%s|%s>',
 						project.path,
 						object.iid,
 						verb,
