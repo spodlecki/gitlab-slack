@@ -199,18 +199,16 @@ function processIssue(httpreq, issueData) {
 				text;
 
 			if (assignee) {
-				assigneeName = util.format('<https://git.lab.teralogics.com/u/%s|%s>', assignee.username, assignee.username);
+				assigneeName = util.format('@%s', assignee.username);
 			}
 
 			text = util.format(
-				'[%s] issue #%s %s by <https://git.lab.teralogics.com/u/%s|%s> — *assignee:* %s — *creator:* <https://git.lab.teralogics.com/u/%s|%s>',
+				'[%s] issue #%s %s by @%s — *assignee:* %s — *creator:* @%s',
 				project.path,
 				issueDetails.iid,
 				verb,
 				issueData.user.username,
-				issueData.user.username,
 				assigneeName,
-				author.username,
 				author.username
 			);
 
@@ -285,9 +283,8 @@ function processBranch(httpreq, branchData, beforeZero, afterZero) {
 			response = {
 				parse: 'none',
 				text: util.format(
-					'[%s] <https://git.lab.teralogics.com/u/%s|%s> %s <%s/tree/%s|%s>',
+					'[%s] @%s %s <%s/tree/%s|%s>',
 					project.path,
-					user.username,
 					user.username,
 					action,
 					project.web_url,
@@ -337,10 +334,9 @@ function processCommit(httpreq, commitData) {
 			response = {
 				parse: 'none',
 				text: util.format(
-					'[%s:%s] <https://git.lab.teralogics.com/u/%s|%s> pushed %s new commits:',
+					'[%s:%s] @%s pushed %s new commits:',
 					project.path,
 					commitData.ref.substr(commitData.ref.lastIndexOf('/') + 1),
-					user.username,
 					user.username,
 					commitData.total_commits_count
 				),
@@ -438,9 +434,8 @@ function processTag(httpreq, tagData) {
 			tag = tagData.ref.substr(tagData.ref.lastIndexOf('/') + 1),
 			response = {
 				text: util.format(
-					'[%s] <https://git.lab.teralogics.com/u/%s|%s> %s <%s/commits/%s|%s>',
+					'[%s] @%s %s <%s/commits/%s|%s>',
 					project.path,
-					user.username,
 					user.username,
 					action,
 					project.web_url,
@@ -495,18 +490,16 @@ function processMergeRequest(httpreq, req) {
 							text;
 
 					if (assignee) {
-						assigneeName = util.format('<@%s|%s>', assignee.username, assignee.username);
+						assigneeName = util.format('@%s', assignee.username, assignee.username);
 					}
 
 					text = util.format(
-						'[%s] merge request #%s %s by <@%s|%s> — *assignee:* %s — *creator:* <@%s|%s>',
+						'[%s] merge request #%s %s by @%s — *assignee:* %s — *creator:* @%s',
 						project.path,
 						object.iid,
 						verb,
 						user.username,
-						user.username,
 						assigneeName,
-						author.username,
 						author.username
 					);
 
