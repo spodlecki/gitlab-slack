@@ -199,11 +199,11 @@ function processIssue(httpreq, issueData) {
 				text;
 
 			if (assignee) {
-				assigneeName = util.format('<@%s|@%s>', assignee.username, assignee.username);
+				assigneeName = util.format('<@%s|%s>', assignee.username, assignee.username);
 			}
 
 			text = util.format(
-				'[%s] issue #%s %s by <@%s|@%s> — *assignee:* %s — *creator:* <@%s|@%s>',
+				'[%s] issue #%s %s by <@%s|%s> — *assignee:* %s — *creator:* <@%s|%s>',
 				project.path,
 				issueDetails.iid,
 				verb,
@@ -285,7 +285,7 @@ function processBranch(httpreq, branchData, beforeZero, afterZero) {
 			response = {
 				parse: 'none',
 				text: util.format(
-					'[%s] <@%s|@%s> %s <%s/tree/%s|%s>',
+					'[%s] <@%s|%s> %s <%s/tree/%s|%s>',
 					project.path,
 					user.username,
 					user.username,
@@ -337,7 +337,7 @@ function processCommit(httpreq, commitData) {
 			response = {
 				parse: 'none',
 				text: util.format(
-					'[%s:%s] <@%s|@%s> pushed %s new commits:',
+					'[%s:%s] <@%s|%s> pushed %s new commits:',
 					project.path,
 					commitData.ref.substr(commitData.ref.lastIndexOf('/') + 1),
 					user.username,
@@ -438,7 +438,7 @@ function processTag(httpreq, tagData) {
 			tag = tagData.ref.substr(tagData.ref.lastIndexOf('/') + 1),
 			response = {
 				text: util.format(
-					'[%s] <@%s|@%s> %s <%s/commits/%s|%s>',
+					'[%s] <@%s|%s> %s <%s/commits/%s|%s>',
 					project.path,
 					user.username,
 					user.username,
@@ -495,11 +495,11 @@ function processMergeRequest(httpreq, req) {
 							text;
 
 					if (assignee) {
-						assigneeName = util.format('<@%s|@%s>', assignee.username, assignee.username);
+						assigneeName = util.format('<@%s|%s>', assignee.username, assignee.username);
 					}
 
 					text = util.format(
-						'[%s] merge request #%s %s by <@%s|@%s> — *assignee:* %s — *creator:* <@%s|@%s>',
+						'[%s] merge request #%s %s by <@%s|%s> — *assignee:* %s — *creator:* <@%s|%s>',
 						project.path,
 						object.iid,
 						verb,
